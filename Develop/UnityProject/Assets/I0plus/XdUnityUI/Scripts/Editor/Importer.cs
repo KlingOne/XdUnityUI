@@ -320,18 +320,8 @@ namespace I0plus.XdUnityUI.Editor
                         Path.Combine(EditorUtil.GetOutputSpritesFolderAssetPath(), subFolderName);
                     var fontAssetPath = EditorUtil.GetFontsAssetPath();
                     var creator = new PrefabCreator(spriteOutputFolderAssetPath, fontAssetPath, layoutFilePath, prefabs);
-                    go = creator.Create();
-                    var saveAssetPath =
-                        Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath(),
-                            subFolderName), prefabFileName);
-#if UNITY_2018_3_OR_NEWER
-                    var savedAsset = PrefabUtility.SaveAsPrefabAsset(go, saveAssetPath);
-                    Debug.Log("[XdUnityUI] Created prefab: " + saveAssetPath, savedAsset);
-#else
-                    Object originalPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(savePath);
-                    if (originalPrefab == null) originalPrefab = PrefabUtility.CreateEmptyPrefab(savePath);
-                    PrefabUtility.ReplacePrefab(go, originalPrefab, ReplacePrefabOptions.ReplaceNameBased);
-#endif
+                    go = creator.Create(subFolderName);
+
                 }
                 catch (Exception ex)
                 {

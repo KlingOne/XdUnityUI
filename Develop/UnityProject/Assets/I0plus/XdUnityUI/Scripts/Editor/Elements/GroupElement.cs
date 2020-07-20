@@ -153,19 +153,20 @@ namespace I0plus.XdUnityUI.Editor
                 var go = element.Render(renderContext, parent);
                 if (go.transform.parent != parent.transform) Debug.Log("No parent set" + go.name);
 
-                //if (element.IsPrefab)
-                //{
-                //    //TODO: Check if prefab names are truly unique or if the components in Adobe XD can have the same name
-                //    if(!renderContext.Prefabs.ContainsKey(go.name))
-                //        renderContext.Prefabs.Add(go.name,go);
-                //    else
-                //    {
-                //        var oldGo = go;
-                //        go = (GameObject)PrefabUtility.InstantiatePrefab(renderContext.Prefabs[oldGo.name],oldGo.transform.parent);
+                if(element.IsPrefab)
+                {
+                    if (PrefabUtility.GetPrefabAssetType(go) == PrefabAssetType.NotAPrefab)
+                    {
+                        var nestedPrefabDirectory = Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath()), "Components");
 
-                //        GameObject.DestroyImmediate(oldGo);
-                //    }
-                //}
+                        if (!Directory.Exists(nestedPrefabDirectory))
+                            Directory.CreateDirectory(nestedPrefabDirectory);
+
+                        var fileName = Path.Combine(nestedPrefabDirectory, go.name + ".prefab");
+
+                        renderContext.ExistingPrefabs.Add(UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(go, fileName , UnityEditor.InteractionMode.AutomatedAction));
+                    }
+                }
 
                 list.Add(new Tuple<GameObject, Element>(go, element));
                 if (callback != null) callback.Invoke(go, element);

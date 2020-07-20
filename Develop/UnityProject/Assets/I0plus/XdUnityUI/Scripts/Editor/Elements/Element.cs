@@ -25,6 +25,11 @@ namespace I0plus.XdUnityUI.Editor
             get;
             private set;
         }
+        public string PrefabID
+        {
+            get;
+            private set;
+        }
 
         private GameObject go;
 
@@ -41,6 +46,7 @@ namespace I0plus.XdUnityUI.Editor
             LayoutElementJson = json.GetDic("layout_element");
 
             IsPrefab = json.Get("symbolInstance") != null;
+            PrefabID = json.Get("symbolID");
         }
 
         public string Name => name;
@@ -72,7 +78,6 @@ namespace I0plus.XdUnityUI.Editor
             if (parentPrefab != null)
             {
                 //...and if so check if the element we want to create here has already been created as part of the prefab...
-                //TODO: This will lead to problems if we have mutliple transforms in prefab with the same name see issue https://github.com/KlingOne/XdUnityUI/issues/4
                 go = parentPrefab.GetComponentsInChildren<Transform>().FirstOrDefault(x => x.name == this.Name && x.gameObject != parentObject)?.gameObject;
                 isPrefabChild = true;
             }
@@ -83,8 +88,7 @@ namespace I0plus.XdUnityUI.Editor
                 if (this.IsPrefab)
                 {
                     //check if there already is a existing prefab with the same name from a previous artboard generation
-                    //TODO: Check if prefab names are truly unique or if the components in Adobe XD can have the same name
-                    var existingGo = renderContext.ExistingPrefabs.FirstOrDefault(x => x.name == name);
+                    var existingGo = renderContext.ExistingPrefabs.FirstOrDefault(x => x.name == PrefabID);
 
                     //...if not we register this new gameObject to be saved out as a prefab
                     if (existingGo == null)
@@ -95,7 +99,7 @@ namespace I0plus.XdUnityUI.Editor
                     }
                     else
                     {
-                        go = (GameObject)PrefabUtility.InstantiatePrefab(renderContext.ExistingPrefabs.First(x => x.name == name));
+                        go = (GameObject)PrefabUtility.InstantiatePrefab(renderContext.ExistingPrefabs.First(x => x.name == PrefabID));
                     }
                 }
                 else
@@ -109,7 +113,13 @@ namespace I0plus.XdUnityUI.Editor
 
         protected GameObject InstantiateUiGameObject()
         {
-            GameObject go = new GameObject(name);
+            GameObject go;
+
+            if (!IsPrefab)
+                go = new GameObject(name);
+            else
+                go = new GameObject(PrefabID);
+
             go.AddComponent<RectTransform>();
             ElementUtil.SetLayer(go, Layer);
             if (Active != null) go.SetActive(Active.Value);

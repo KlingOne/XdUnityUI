@@ -37,7 +37,7 @@ namespace I0plus.XdUnityUI.Editor
             this.nestedPrefabs = prefabs;
         }
 
-        public GameObject Create()
+        public GameObject Create(string subFolderName)
         {
             if (EditorApplication.isPlaying) EditorApplication.isPlaying = false;
 
@@ -67,21 +67,19 @@ namespace I0plus.XdUnityUI.Editor
                 }
             }
 
-            foreach(var prefab in renderer.NewPrefabs.ToList())
-            {
-
-                //if we haven't created a prefab out of the referenced GO we do so now
-                if (PrefabUtility.GetPrefabAssetType(prefab) == PrefabAssetType.NotAPrefab)
-                {
-                    //TODO: Ugly path generation
-                    var nestedPrefabDirectory = Path.Combine(Application.dataPath.Replace("Assets", ""), Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath()), "Components"));
-
-                    if (!Directory.Exists(nestedPrefabDirectory))
-                        Directory.CreateDirectory(nestedPrefabDirectory);
-
-                    nestedPrefabs.Add(UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(prefab, Path.Combine(nestedPrefabDirectory, prefab.name + ".prefab"), UnityEditor.InteractionMode.AutomatedAction));
-                }
-            }
+            //Path.Combine(nestedPrefabDirectory, go.name + ".prefab")
+            var prefabFileName = rootJson.Get("id");
+            var saveAssetPath = 
+            Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath(),
+                subFolderName), prefabFileName)+".prefab";
+#if UNITY_2018_3_OR_NEWER
+            var savedAsset = UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(root,saveAssetPath, UnityEditor.InteractionMode.AutomatedAction);
+                    Debug.Log("[XdUnityUI] Created prefab: " + saveAssetPath, savedAsset);
+        #else
+                            Object originalPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(savePath);
+                            if (originalPrefab == null) originalPrefab = PrefabUtility.CreateEmptyPrefab(savePath);
+                            PrefabUtility.ReplacePrefab(go, originalPrefab, ReplacePrefabOptions.ReplaceNameBased);
+        #endif
 
             return root;
         }
