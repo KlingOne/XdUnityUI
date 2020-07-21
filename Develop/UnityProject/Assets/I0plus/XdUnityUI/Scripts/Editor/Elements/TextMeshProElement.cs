@@ -41,14 +41,9 @@ namespace I0plus.XdUnityUI.Editor
             var align = _textJson.Get("align");
             var type = _textJson.Get("textType");
 
-            var text = go.GetComponent<TextMeshProUGUI>();
+            var text = this.AddComponent<TextMeshProUGUI>();
 
-            //if a text component is already present this means this go is part of a prefab and we skip the font generation
-            if (text == null)
-            {
-                text = go.AddComponent<TextMeshProUGUI>();
-                text.font = renderer.GetTMPFontAsset(fontName, fontStyle);
-            }
+            text.font = renderer.GetTMPFontAsset(fontName, fontStyle);
 
             text.text = message;
             text.fontSize = fontSize.Value;

@@ -23,7 +23,8 @@ namespace I0plus.XdUnityUI.Editor
 
             var children = RenderChildren(renderContext, go);
 
-            var inputField = go.AddComponent<InputField>();
+            var inputField = this.AddComponent<InputField>();
+
             inputField.transition = Selectable.Transition.None;
             if (InputJson != null)
             {

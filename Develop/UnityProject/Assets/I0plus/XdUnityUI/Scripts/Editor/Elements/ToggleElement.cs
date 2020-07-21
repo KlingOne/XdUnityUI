@@ -22,22 +22,16 @@ namespace I0plus.XdUnityUI.Editor
 
             var children = RenderChildren(renderContext, go);
 
-            var toggle = go.GetComponent<Toggle>();
+            var toggle = this.AddComponent<Toggle>();
 
-            //if a text toggle is already present this means this go is part of a prefab and we skip the toggle group assignment
-            if (toggle == null)
+            // トグルグループ名
+            var group = _toggleJson.Get("group");
+            if (group != null)
             {
-                toggle = go.AddComponent<Toggle>();
-                // トグルグループ名
-                var group = _toggleJson.Get("group");
-                if (group != null)
-                {
-                    var toggleGroup = renderContext.GetToggleGroup(group);
-                    //Debug.Log("toggleGroup:" + toggleGroup);
-                    toggle.group = toggleGroup;
-                }
+                var toggleGroup = renderContext.GetToggleGroup(group);
+                //Debug.Log("toggleGroup:" + toggleGroup);
+                toggle.group = toggleGroup;
             }
-
 
             var targetImage =
                 ElementUtil.FindComponentByClassName<Image>(children, _toggleJson.Get("target_graphic_class"));

@@ -35,35 +35,29 @@ namespace I0plus.XdUnityUI.Editor
             var align = _textJson.Get("align");
             var type = _textJson.Get("textType");
 
-            var text = go.GetComponent<Text>();
+            var text = this.AddComponent<Text>();
+            
+            // 検索するフォント名を決定する
+            var fontFilename = fontName;
 
-            //if a text component is already present this means this go is part of a prefab and we skip the font generation
-            if (text == null)
+            if (_textJson.ContainsKey("style"))
             {
-                text = this.AddComponent<Text>();
-
-                // 検索するフォント名を決定する
-                var fontFilename = fontName;
-
-                if (_textJson.ContainsKey("style"))
+                var style = _textJson.Get("style");
+                fontFilename += "-" + style;
+                if (style.Contains("normal") || style.Contains("medium"))
                 {
-                    var style = _textJson.Get("style");
-                    fontFilename += "-" + style;
-                    if (style.Contains("normal") || style.Contains("medium"))
-                    {
-                        text.fontStyle = FontStyle.Normal;
-                    }
-
-                    if (style.Contains("bold"))
-                    {
-                        text.fontStyle = FontStyle.Bold;
-                    }
+                    text.fontStyle = FontStyle.Normal;
                 }
 
-                text.fontSize = Mathf.RoundToInt(fontSize.Value);
-                text.font = renderContext.GetFont(fontFilename);
+                if (style.Contains("bold"))
+                {
+                    text.fontStyle = FontStyle.Bold;
+                }
             }
-         
+
+            text.fontSize = Mathf.RoundToInt(fontSize.Value);
+            text.font = renderContext.GetFont(fontFilename);
+
             text.text = message;
             text.color = Color.black;
 

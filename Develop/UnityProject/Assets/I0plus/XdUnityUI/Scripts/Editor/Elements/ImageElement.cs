@@ -30,13 +30,7 @@ namespace I0plus.XdUnityUI.Editor
                 //親のパラメータがある場合､親にする 後のAnchor定義のため
                 rect.SetParent(parentObject.transform);
 
-            var image = go.GetComponent<Image>();
-
-            //if a image component is already present this means this go is part of a prefab and we skip the image setup since it has already been done
-            if (image == null)
-            {
-                image = this.AddComponent<Image>();        
-            }
+            var image = this.AddComponent<Image>();        
 
             image.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             var raycastTarget = ImageJson.GetBool("raycast_target");

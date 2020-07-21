@@ -157,14 +157,16 @@ namespace I0plus.XdUnityUI.Editor
                 {
                     if (PrefabUtility.GetPrefabAssetType(go) == PrefabAssetType.NotAPrefab)
                     {
-                        var nestedPrefabDirectory = Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath()), "Components");
+                        //var nestedPrefabDirectory = Path.Combine(Path.Combine(EditorUtil.GetMasterPrefabsFolderAssetPath()), "Components");
 
-                        if (!Directory.Exists(nestedPrefabDirectory))
-                            Directory.CreateDirectory(nestedPrefabDirectory);
+                        //if (!Directory.Exists(nestedPrefabDirectory))
+                        //    Directory.CreateDirectory(nestedPrefabDirectory);
 
-                        var fileName = Path.Combine(nestedPrefabDirectory, go.name + ".prefab");
+                        //var fileName = Path.Combine(nestedPrefabDirectory, go.name + ".prefab");
 
-                        renderContext.ExistingPrefabs.Add(UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(go, fileName , UnityEditor.InteractionMode.AutomatedAction));
+                        var prefab = EditorUtil.SaveMasterAndUserPrefab(go, "Components", element.Name);
+
+                        renderContext.ExistingPrefabs.Add(prefab);
                     }
                 }
 
