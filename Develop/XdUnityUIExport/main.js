@@ -4356,7 +4356,15 @@ async function createRoot(renditions, outputFolder, root) {
             symbolInstance: getUnityName(node)
           })
         }
+
+        Object.assign(json, {
+          symbolID: node.symbolId
+        })
+
       case 'Artboard':
+        Object.assign(json, {
+          id: node.guid
+        })
       case 'ScrollableGroup':
       case 'Group':
       case 'RepeatGrid':
