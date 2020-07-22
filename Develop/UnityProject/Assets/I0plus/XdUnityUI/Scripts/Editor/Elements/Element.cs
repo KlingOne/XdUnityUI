@@ -94,12 +94,11 @@ namespace I0plus.XdUnityUI.Editor
                     if (existingGo == null)
                     {
                         go = InstantiateUiGameObject();
-                        //we store new prefabs in a stack since we need to convert them into actual prefabs back to front in order for nesting to work properly
-                        renderContext.NewPrefabs.Push(go);
                     }
                     else
                     {
                         go = (GameObject)PrefabUtility.InstantiatePrefab(renderContext.ExistingPrefabs.First(x => x.name == PrefabID));
+                        go.name = name;
                     }
                 }
                 else
@@ -115,10 +114,7 @@ namespace I0plus.XdUnityUI.Editor
         {
             GameObject go;
 
-            if (!IsPrefab)
-                go = new GameObject(name);
-            else
-                go = new GameObject(PrefabID);
+            go = new GameObject(name);
 
             go.AddComponent<RectTransform>();
             ElementUtil.SetLayer(go, Layer);
@@ -126,17 +122,15 @@ namespace I0plus.XdUnityUI.Editor
             return go;
         }
 
-        //since we do not want to read components to a prefab we use this method to add components to elements
+        //since we do not want to readd components to a prefab we use this method to add components to elements
         protected T AddComponent<T>() where T : Component
         {
-            if(!this.IsPrefab || PrefabUtility.GetPrefabAssetType(go) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(go) == PrefabAssetType.MissingAsset)
-            {
-                return go.AddComponent<T>();
-            }
-            else
-            {
-                return go.GetComponent<T>();
-            }
+            T component = this.go.GetComponent<T>();
+
+            if (component == null)
+                component = this.go.AddComponent<T>();
+
+            return component;
         }
     }
 }

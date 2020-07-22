@@ -157,15 +157,16 @@ namespace I0plus.XdUnityUI.Editor
                 {
                     if (PrefabUtility.GetPrefabAssetType(go) == PrefabAssetType.NotAPrefab)
                     {
-                        //var nestedPrefabDirectory = Path.Combine(Path.Combine(EditorUtil.GetMasterPrefabsFolderAssetPath()), "Components");
+                        var nestedPrefabDirectory = Path.Combine(EditorUtil.GetMasterPrefabFolder(), "Components");
 
-                        //if (!Directory.Exists(nestedPrefabDirectory))
-                        //    Directory.CreateDirectory(nestedPrefabDirectory);
+                        var fileName = Path.Combine(nestedPrefabDirectory, element.Name + ".prefab");
 
-                        //var fileName = Path.Combine(nestedPrefabDirectory, go.name + ".prefab");
+                        EditorUtil.CreateDirectoryIfNotExistant(nestedPrefabDirectory);
 
-                        var prefab = EditorUtil.SaveMasterAndUserPrefab(go, "Components", element.Name);
+                        var prefab = UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(go, fileName, UnityEditor.InteractionMode.AutomatedAction);
 
+                        //we need to rename the gameObject to the prefab ID so that we can later on recognize it when we encounter an element wit the same PrefabID
+                        prefab.name = element.PrefabID;
                         renderContext.ExistingPrefabs.Add(prefab);
                     }
                 }

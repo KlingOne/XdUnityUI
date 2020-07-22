@@ -238,10 +238,10 @@ namespace I0plus.XdUnityUI.Editor
                     changed = true;
                 }
 
-                var prefabsOutputPath = Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath(), subFolderName);
+                var prefabsOutputPath = Path.Combine(EditorUtil.GetMasterPrefabFolder(), subFolderName);
                 if (!Directory.Exists(prefabsOutputPath))
                 {
-                    AssetDatabase.CreateFolder(EditorUtil.GetOutputPrefabsFolderAssetPath(),
+                    AssetDatabase.CreateFolder(EditorUtil.GetMasterPrefabFolder(),
                         subFolderName);
                     changed = true;
                 }

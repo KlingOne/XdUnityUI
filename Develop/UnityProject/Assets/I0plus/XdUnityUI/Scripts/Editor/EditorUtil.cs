@@ -126,12 +126,19 @@ namespace I0plus.XdUnityUI.Editor
             return FindFolderAssetPath("_XdUnityUISprites");
         }
 
-        public static string GetOutputPrefabsFolderAssetPath()
+        public static string GetMasterPrefabFolder()
         {
             var path = FindFolderAssetPath("_XdUnityUIPrefabs1", false);
             if (path != null) return path;
             return FindFolderAssetPath("_XdUnityUIPrefabs");
         }
+
+        public static string GetUserPrefabFolder()
+        {
+            var path = FindFolderAssetPath("_XdUserUIPrefabs1", false);
+            if (path != null) return path;
+            return FindFolderAssetPath("_XdUserUIPrefabs");
+        }     
 
         public static string GetFontsAssetPath()
         {
@@ -145,6 +152,16 @@ namespace I0plus.XdUnityUI.Editor
             var path = FindFolderAssetPath("_XdUnityUIAtlas1", false);
             if (path != null) return path;
             return FindFolderAssetPath("_XdUnityUIAtlas");
+        }
+
+        public static void CreateDirectoryIfNotExistant(string path)
+        {
+            var fullPath = Path.Combine(Application.dataPath.Replace("Assets", ""), path);
+            
+            if(!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+            }
         }
 
         /// <summary>
@@ -165,7 +182,7 @@ namespace I0plus.XdUnityUI.Editor
         {
             // サブディレクトリ名を取得する
             var directoryName = Path.GetFileName(Path.GetFileName(prefabPath));
-            var directoryPath = GetOutputPrefabsFolderAssetPath();
+            var directoryPath = GetMasterPrefabFolder();
             var directoryFullPath = Path.Combine(directoryPath, directoryName);
             return directoryFullPath;
         }

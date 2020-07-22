@@ -67,19 +67,30 @@ namespace I0plus.XdUnityUI.Editor
                 }
             }
 
-            //Path.Combine(nestedPrefabDirectory, go.name + ".prefab")
             var prefabFileName = rootJson.Get("id");
-            var saveAssetPath = 
-            Path.Combine(Path.Combine(EditorUtil.GetOutputPrefabsFolderAssetPath(),
+            var masterAssetPath = 
+            Path.Combine(Path.Combine(EditorUtil.GetMasterPrefabFolder(),
                 subFolderName), prefabFileName)+".prefab";
-#if UNITY_2018_3_OR_NEWER
-            var savedAsset = UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(root,saveAssetPath, UnityEditor.InteractionMode.AutomatedAction);
-                    Debug.Log("[XdUnityUI] Created prefab: " + saveAssetPath, savedAsset);
-        #else
-                            Object originalPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(savePath);
-                            if (originalPrefab == null) originalPrefab = PrefabUtility.CreateEmptyPrefab(savePath);
-                            PrefabUtility.ReplacePrefab(go, originalPrefab, ReplacePrefabOptions.ReplaceNameBased);
-        #endif
+
+            //we create a master prefab which gets a cryptic name (the prefabID) so that the user knows not to use this prefab directly since it
+            //will be overriden when the ui gets imported again
+            UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(root,masterAssetPath, UnityEditor.InteractionMode.AutomatedAction);
+
+            var userFolder = Path.Combine(EditorUtil.GetUserPrefabFolder(), subFolderName);
+
+            var userAssetPath = Path.Combine(userFolder, rootJson.Get("name")) + ".prefab";
+
+            if(AssetDatabase.LoadAssetAtPath<GameObject>(userAssetPath) == null)
+            {
+
+                EditorUtil.CreateDirectoryIfNotExistant(userFolder);
+                //we then create a prefab variant of the master prefab with a human readable name if it does not exist
+                //this variant links to the master prefab and thus gets its changes when the master prefab is reimported but it also keeps the users changes made
+                //in unity
+                //TODO: this approach has the limitation that all changes get stored in the root of an "Artboard" represnation in unity
+                //making modifications to components (nested Prefabs) is not currently supported
+                UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(root, userAssetPath, UnityEditor.InteractionMode.AutomatedAction);
+            }
 
             return root;
         }
